@@ -1,14 +1,16 @@
-use actix_web::{get, web, App, HttpServer};
+use actix_web::{web, App, HttpServer};
+use std::sync::Mutex;
 
-// This represents state
-struct AppState {
-    app_name: String,
+struct AppStateWithCounter {
+    counter: Mutex<i32>, //Mutex is necessary to mutate safely across threads
+
 }
 
-#[get("/")]
-async fn index(data: web::Data<AppState>) -> String {
-    let app_name = &data.app_name; //GET app_name
-    format!("Hello {app_name}") //response with app_name
+async fn infex(data: web::Data<AppStateWithCounter>) -> String {
+    let mut counter = data.counter.lock().unwrap(); // get counter's mutexGuard
+    *counter += 1; // access counter inside MutexGuard
+
+    format!("Request number: {counter}") // response with count
 }
 
 #[actix_web::main]
