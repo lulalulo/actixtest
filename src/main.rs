@@ -15,12 +15,14 @@ async fn index(data: web::Data<AppStateWithCounter>) -> String {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+    
+    let counter = web::Data::new(AppStateWithCounter {
+        counter: Mutex::new(0),
+    });
+    HttpServer::new(move || {
         App::new()
-            .app_data(web::Data::new(AppState {
-                app_name: String::from("Actix Web"),
-            }))
-            .service(index)
+            .app_data(counter.clone())
+            .route("/", web::get().to(index))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
