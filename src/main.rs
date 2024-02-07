@@ -13,7 +13,7 @@ async fn index(data: web::Data<AppState>) -> String {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpSErver::new(|| {
+    HttpServer::new(|| {
         App::new()
             .app_data(web::Data::new(AppState {
                 app_name: String::from("Actix Web"),
