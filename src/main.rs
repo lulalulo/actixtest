@@ -6,7 +6,7 @@ struct AppStateWithCounter {
 
 }
 
-async fn infex(data: web::Data<AppStateWithCounter>) -> String {
+async fn index(data: web::Data<AppStateWithCounter>) -> String {
     let mut counter = data.counter.lock().unwrap(); // get counter's mutexGuard
     *counter += 1; // access counter inside MutexGuard
 
