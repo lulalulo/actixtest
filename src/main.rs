@@ -1,16 +1,12 @@
-use actix_web::{web, App, HttpServer};
-use std::sync::Mutex;
+use actix_web::{web, App, HttpResponse, HttpServer};
 
-struct AppStateWithCounter {
-    counter: Mutex<i32>, //Mutex is necessary to mutate safely across threads
-
-}
-
-async fn index(data: web::Data<AppStateWithCounter>) -> String {
-    let mut counter = data.counter.lock().unwrap(); // get counter's mutexGuard
-    *counter += 1; // access counter inside MutexGuard
-
-    format!("Request number: {counter}") // response with count
+// this function could be located in a different module
+fn scoped_config(cfg: &mut, web::ServiceConfig) {
+    cfg.service(
+        web::resource("/test")
+            .route(web::get().to(|| async {HttpResponse::Ok().body("test") }))
+            .route(web::head().to(HttpResponse::MethodNotAllowed)),
+    );
 }
 
 #[actix_web::main]
