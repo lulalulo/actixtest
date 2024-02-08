@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpServer};
 use std::sync::Mutex;
-// test again
+
 struct AppStateWithCounter {
     counter: Mutex<i32>, //Mutex is necessary to mutate safely across threads
 
@@ -16,13 +16,14 @@ async fn index(data: web::Data<AppStateWithCounter>) -> String {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     
-    let counter = web::Data::new(AppStateWithCounter {
-        counter: Mutex::new(0),
-    });
-    HttpServer::new(move || {
+    HttpServer::new(|| {
         App::new()
-            .app_data(counter.clone())
-            .route("/", web::get().to(index))
+            .service(
+                web::scope("/")
+                    .guard(guard::Host("www.rust-lang.org"))
+                    .route("", web::to(|| async { HttpResponse::Ok.body("www") })),
+            )
+            .route("/", web::to(HttpResponse::Ok))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
