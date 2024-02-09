@@ -1,26 +1,15 @@
-use actix_web::{get, App, HttpRequest, HttpServer, Responder};
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use actix_web::{get, web, App, HttpServer, Result};
 
-#[get("/")]
-async fn index(_req: HttpRequest) -> impl Responder {
-    "Welcome!"
+/// Extract path info from "/users/{user_id}/{friend}} url"
+/// {user_id} - deserializes to a u32 
+/// {friend} - deserializes to a String
+#[get("/users/{users_id}/{friend}")] // <- define path params
+async fn index(path: web::Path<(u32, String)>) -> Result<String> {
+    let (user_id, friend) = path.info_inner();
+    Ok(format!("Welcome {}, user_id {}!", friend, user_id))
 }
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-   // load TLS keys
-   // to create a self-signed temporary cert testing
-   // `openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365 -subj '/CN=localhost'`
-   let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-   builder
-       .set_private_key_file("key.pem", SslFiletype::PEM)
-       .unwrap();
 
-   builder.set_certificate_chain_file("cert.pem").unwrap(); 
-    
-   HttpServer::new(|| App::new().service(index))
-       .bind_openssl("127.0.0.1:8080", builder)?
-       .run()
-       .await
 }
