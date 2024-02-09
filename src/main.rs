@@ -23,12 +23,12 @@ async fn main() -> std::io::Result<()> {
     
     HttpServer::new(|| {
         App::new()
-            .service(
-                web::scope("/")
-                    .guard(guard::Host("www.rust-lang.org"))
-                    .route("", web::to(|| async { HttpResponse::Ok.body("www") })),
+            .configure(config)
+            .service(web::scope("/api").configure(scoped_config))
+            .route(
+                "/",
+                web::get().to(|| async { HttpResponse::Ok.body("/") }),
             )
-            .route("/", web::to(HttpResponse::Ok))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
