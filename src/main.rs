@@ -9,11 +9,11 @@ struct Info {
 
 /// extract path info using serde
 #[get("/users/{users_id}/{friend}")] // <- define path params
-async fn index(path: web::Path<Info>) -> Result<String> {
-    Ok(format!(
-            "Welcome {}, user_id {}!", 
-            info.friend, info.user_id
-    ))
+async fn index(req: HttpRequest) -> Result<String> {
+    let name: String = req.match_info().get("friend").unwrap().parse().unwrap();
+    let userid: i32 = req.match_info().query("user_id").parse().unwrap();
+
+    Ok(format!("Welcome {}, user_id {}", name, user_id))
 }
 
 #[actix_web::main]
