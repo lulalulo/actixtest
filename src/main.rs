@@ -12,11 +12,14 @@ struct Info {
 async fn index(path: web::Path<Info>) -> Result<String> {
     Ok(format!(
             "Welcome {}, user_id {}!", 
-            info.friend, info.user_id))
+            info.friend, info.user_id
+    ))
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    use actix_web::{App, HttpServer};
+
     HttpServer::new(|| App::new().service(index))
         .bind(("127.0.0.1", 8080))?
         .run()
