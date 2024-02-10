@@ -1,8 +1,12 @@
-use actix_web::{get, web, App, HttpServer, Result};
+use actix_web::{get, web, Result};
+use serde::Deserialize;
 
-/// Extract path info from "/users/{user_id}/{friend}} url"
-/// {user_id} - deserializes to a u32 
-/// {friend} - deserializes to a String
+#[derive(Deserialize)]
+struct Info {
+    user_id, u32,
+    friend: String,
+}
+
 #[get("/users/{users_id}/{friend}")] // <- define path params
 async fn index(path: web::Path<(u32, String)>) -> Result<String> {
     let (user_id, friend) = path.info_inner();
