@@ -7,10 +7,12 @@ struct Info {
     friend: String,
 }
 
+/// extract path info using serde
 #[get("/users/{users_id}/{friend}")] // <- define path params
-async fn index(path: web::Path<(u32, String)>) -> Result<String> {
-    let (user_id, friend) = path.info_inner();
-    Ok(format!("Welcome {}, user_id {}!", friend, user_id))
+async fn index(path: web::Path<Info>) -> Result<String> {
+    Ok(format!(
+            "Welcome {}, user_id {}!", 
+            info.friend, info.user_id))
 }
 
 #[actix_web::main]
