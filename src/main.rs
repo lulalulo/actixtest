@@ -1,9 +1,15 @@
-use actix_web::{get, web, App, HttpServer};
+use actix_web::{get, web, App, HttpServer, Result};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct Info {
     username: String,
+}
+
+/// deserialize info from request body
+#[post("/submit")]
+async fn submit(info: web::Json<Info>) -> Result<String> {
+    Ok(format!("Welcome {}!", info.username))
 }
 
 /// extract path info using serde
