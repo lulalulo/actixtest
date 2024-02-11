@@ -1,18 +1,6 @@
-use actix_web::middleware::Logger;
-use env_logger::Env;
+use actix_session::{Session, SessionMiddleware, storage::CookieSessionStore};
+use actix_web::{web, App, Error, HttpResponse, HttpServer, cookie::Key};
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    use actix_web::{App, HttpServer};
-    
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
+async fn index(session: Session) -> Result<HttpResponse, Error> {
 
-    HttpServer::new(|| {
-        App::new()
-            .wrap(Logger::default())
-            .wrap(Logger::new("%a %{User-Agen}i"))
-    })
-    bind(("127.0.0.1", 8080))?
-    .run()
-    .await
 }
