@@ -5,6 +5,12 @@ use serde::Serialize;
 struct MyObj {
     name: String,
 }
-async fn index() {
 
+#[get("/a/{name}")]
+async fn index(name: web::Path<String>) -> Result<impl Responder> {
+    let obj = MyObj {
+        name: name.to_string(),
+    };
+    Ok(web::Json(obj))
 }
+
