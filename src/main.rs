@@ -1,35 +1,14 @@
-use actix_web::{web, App, HttpServer, Responder};
-use std::cel::Cell;
+use actix_web::{get, web, App, HttpServer, Responder};
+use std::{
+    cell::Cell,
+    sync::atomic::{AtomicUsize, Ordering},
+    sync::Arc,
+};
 
 #[derive(Clone)]
 struct AppState {
-    count: Cell<usize>,
+    local_count: Cell<usize>,
+    global_count: Arc<AtomicUsize>,
 }
 
-async fn show_count(data: web::Data<AppState>) -> impl Responder {
-    format!("count: {}", data.countget())
-}
 
-async fn add_one(data: web::Data<AppState>) -> impl Responder {
-    let count = data.count.get();
-    data.count.set(count + 1);
-
-    format!("count: {}", data.count.get())
-}
-
-#[actix_web::main]
-async fn main -> std::io::Result<()> {
-    let data = AppState {
-        count: Cell::new(0),
-    };
-
-    HttpServer::new(move || {
-        App::new()
-            .app_data(web::Data::new(data.clone()))
-            .route("/", web::to(show_count))
-            .route("/add", web::to(add_one))
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
-}
