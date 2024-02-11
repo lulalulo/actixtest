@@ -1,38 +1,14 @@
-use actix_web::{error, get, middleware::Logger, App, HttpServer, Result};
-use derive_more::{Display, Error};
-use log::info;
-
-#[derive(Debug, Display, Error)]
-#[display(fmt = "my error: {} ", name)]
-pub struct MyError {
-    name: &'static str,
-}
-
-//use Default implementation for error_response() method
-impl error::ResponseError for MyError {}
+use actix_web::{get, App, HttpRequest, HttpServer, Responder};
 
 #[get("/")]
-async fn index() -> Result<&'static str, MyError> {
-    let err = MyError { name: "test error"};
-    info!("{}", err);
-    Err(err)
+async fn index(req: HttpRequest) -> impl Responder {
+    let url = req.url_for("youtube", ["oHg5SJYRHA0"]).unwrap();
+    assert_eq!(url.as_str(), "https://youtube.com/watch/oHg5SJYRHA0");
+
+    url.to_string()
 }
 
-#[rustfmt::skip]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    std::env::set_var("RUST_LOG", "info");
-    std::env::set_var("RUST_BACKTRACE", "1");
-    env_logger::init();
-
-    HttpServer::new(|| {
-        let logger = Logger::default();
-
-        App::new()
-            .wrap(logger)
-            .service(index)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    
 }
