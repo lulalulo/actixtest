@@ -1,23 +1,18 @@
-use actix_web::{
-    get, http::header::ContentEncoding, middleware, App, HttpResponse, HttpServer,
-};
-
-#[get("/")]
-async fn index() -> HttpResponse {
-    HttpResponse::Ok()
-        // v- disable compression
-        .insert_header(ContentEncoding::Identity)
-        .body("data")
-}
+use actix_web::{dev::Service as _, web, App};
+use futures_util::future::FutureExt;
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .wrap(middleware::Compress::default())
-            .service(index)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+async fn main() {
+    let app = App::new()
+        .wrap_fn(|req, srv| {
+            println!("Hi from start. You requested: {}", req.path());
+            srv.call(req).map(|res| {
+                println!("Hi from response");
+                res
+            })
+        })
+        .route(
+            "/index.html",
+            web::get().to(|| async { "Hello, middleware!"})
+        );
 }
