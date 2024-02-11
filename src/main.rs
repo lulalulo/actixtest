@@ -14,3 +14,20 @@ async fn index(session: Session) -> Result<HttpResponse, Error> {
         session.get::<i32>("counter")?.unwrap()
     )))
 }
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(
+                // create cookie based session middleware
+                SessionMiddleware::builder(CookieSessionStore::default(), Key::from(&[0; 64]))
+                    .cookie_secure(false)
+                    .build()
+            )
+            .service(web::resource("/").to(index))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
+}
