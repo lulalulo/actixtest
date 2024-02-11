@@ -10,5 +10,12 @@ async fn index(req: HttpRequest) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    
+   HttpServer::new(|| {
+        App::new()
+            .service(index)
+            .external_resource("youtube", "https://youtube.com/watch/{video_id}")
+   }) 
+   .bind(("127.0.0.1", 8080))?
+   .run()
+   .await
 }
