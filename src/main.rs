@@ -19,5 +19,17 @@ async fn add_one(data: web::Data<AppState>) -> impl Responder {
 
 #[actix_web::main]
 async fn main -> std::io::Result<()> {
+    let data = AppState {
+        count: Cell::new(0),
+    };
 
+    HttpServer::new(move || {
+        App::new()
+            .app_data(web::Data::new(data.clone()))
+            .route("/", web::to(show_count))
+            .route("/add", web::to(add_one))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
