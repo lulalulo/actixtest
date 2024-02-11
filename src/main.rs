@@ -5,3 +5,10 @@ use serde::Deserialize;
 struct info {
     username: String,
 }
+
+/// extract info using serde
+async fn index(info: web::Json<Info>) -> Result<String> {
+    Ok(format!("Welcome {}!", info.username))
+}
+
+
