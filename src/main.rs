@@ -11,4 +11,11 @@ struct AppState {
     global_count: Arc<AtomicUsize>,
 }
 
-
+#[get("/")]
+async fn show_count(data: web::Data<AppState>) -> impl Responder {
+    format!(
+        "global count: {}\nlocal_count: {}",
+        data.global_count.load(Ordering::Relazed),
+        data.local_count.get()
+    )
+}
