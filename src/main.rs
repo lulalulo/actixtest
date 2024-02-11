@@ -6,3 +6,6 @@ struct AppState {
     count: Cell<usize>,
 }
 
+async fn show_count(data: web::Data<AppState>) -> impl Responder {
+    format!("count: {}", data.countget())
+}
