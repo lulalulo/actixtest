@@ -33,3 +33,21 @@ async fn add_one(data: web::Data<AppState>) -> impl Responder {
         data.local_count.get()
     )
 }
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    let data = AppState {
+        local_count: Cell::new(0),
+        global_count: Arc::new(AtomicUsize::new(0))
+    };
+
+    HttpServer::new(move || {
+        App::new()
+            .app_data(web::Data::new(data.clone()))
+            .service(show_count)
+            .service(add_one)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
+}
