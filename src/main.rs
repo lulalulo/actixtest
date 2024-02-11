@@ -1,18 +1,18 @@
-use actix_web::{dev::Service as _, web, App};
-use futures_util::future::FutureExt;
+use actix_web::middleware::Logger;
+use env_logger::Env;
 
 #[actix_web::main]
-async fn main() {
-    let app = App::new()
-        .wrap_fn(|req, srv| {
-            println!("Hi from start. You requested: {}", req.path());
-            srv.call(req).map(|res| {
-                println!("Hi from response");
-                res
-            })
-        })
-        .route(
-            "/index.html",
-            web::get().to(|| async { "Hello, middleware!"})
-        );
+async fn main() -> std::io::Result<()> {
+    use actix_web::{App, HttpServer};
+    
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(Logger::default())
+            .wrap(Logger::new("%a %{User-Agen}i"))
+    })
+    bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
