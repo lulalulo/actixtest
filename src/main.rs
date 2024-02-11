@@ -11,5 +11,10 @@ pub struct MyError {
 //use Default implementation for error_response() method
 impl error::ResponseError for MyError {}
 
-
+#[get("/")]
+async fn index() -> Result<&'static str, MyError> {
+    let err = MyError { name: "test error"};
+    info!("{}", err);
+    Err(err)
+}
 
