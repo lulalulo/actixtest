@@ -1,4 +1,4 @@
-use actix_web::{http::header::ContentType, HttpResponse};
+use actix_web::{get, web, Responder, Result};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -14,3 +14,12 @@ async fn index(name: web::Path<String>) -> Result<impl Responder> {
     Ok(web::Json(obj))
 }
 
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    use actix_web::{App, HttpServer};
+
+    HttpServer::new(|| App::new().service(index))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
+}
