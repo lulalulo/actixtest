@@ -7,3 +7,11 @@ async fn index(req: HttpRequest) -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+async fn main() -> std::io::Result<()> {
+    use actix_web::{web, App, HttpServer};
+
+    HttpServer::new(|| App::new().route("/{filename:.*}", web::get().to(index)))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
+}
