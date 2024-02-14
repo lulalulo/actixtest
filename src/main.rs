@@ -1,16 +1,11 @@
-use actix_files as fs;
-use actix_web::{App, HttpServer};
+use actix::{Actor, StreamHandler};
+use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_web_actors::ws;
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new().service(
-            fs::Files::new("/static", ".")
-                .show_files_listing()
-                .use_last_modified(true),
-        )
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+/// Define HTTP actor
+struct MyWs;
+
+impl Actor for MyWs {
+    type Context = ws::WebsocketContext<Self>;
 }
+
