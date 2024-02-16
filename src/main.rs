@@ -26,7 +26,6 @@ async fn index(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, E
     println!("{:?}", resp);
     resp
 }
-// 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().route("/ws/", web::get().to(index)))
