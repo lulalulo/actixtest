@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 actix-web = { version = "4", features = ["openssl"] }
-openssl = { version = "0.10"}
+openssl = { version = "0.10", features = ["v110"] }
 env_logger = "0.8"
 log = "0.4"
 derive_more = "0.99.17"
