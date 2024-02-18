@@ -18,6 +18,6 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| App::new().route("/", web::get().to(index)))
         .bind_openssl("127.0.0.1", builder)?
-        .run().
+        .run()
         await
 }
